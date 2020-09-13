@@ -22,27 +22,28 @@ edges <- G %>%
 net <- as_sfnetwork(edges) %>% 
   activate(nodes) %>% 
   st_join(nodes,by = "wktsrid4326")
-
-# interactive spatial visualization
-m <- leaflet() %>% 
-  addProviderTiles("OpenStreetMap.Mapnik") %>% 
-  addPolylines(data = activate(net, "edges") %>% st_as_sf(),popup = ~name) %>% 
-  addMarkers(data = activate(net, "nodes") %>% st_as_sf(),popup = ~present_name, icon = list(iconSize = c(50,50),iconUrl = ~icon))
-# static spatial visualization
-p <- ggplot() +
-  annotation_map_tile(zoom = 7) + 
-  geom_sf(data = activate(net, "edges") %>% st_as_sf(), col = 'grey50') + 
-  geom_sf(data = activate(net, "nodes") %>% st_as_sf(),mapping = aes(shape= typ))
-# graph visualization
 data <- toVisNetworkData(G)
-data$nodes$x = data$nodes$lon
-data$nodes$y = data$nodes$lat
-
-output$mymapInteractive <- renderLeaflet({
-  m})
-output$mymapStatic <- renderPlot({
-  p})
-output$networkAustria <- renderVisNetwork({
-  visNetwork(nodes = data$nodes, edges = data$edges, height = "500px") %>% 
-    visOptions(highlightNearest = TRUE, nodesIdSelection = TRUE)
-})
+data$edges %>% View()
+# interactive spatial visualization
+# m <- leaflet() %>% 
+#   addProviderTiles("OpenStreetMap.Mapnik") %>% 
+#   addPolylines(data = activate(net, "edges") %>% st_as_sf(),popup = ~name) %>% 
+#   addMarkers(data = activate(net, "nodes") %>% st_as_sf(),popup = ~present_name, icon = list(iconSize = c(50,50),iconUrl = ~icon))
+# # static spatial visualization
+# p <- ggplot() +
+#   annotation_map_tile(zoom = 7) + 
+#   geom_sf(data = activate(net, "edges") %>% st_as_sf(), col = 'grey50') + 
+#   geom_sf(data = activate(net, "nodes") %>% st_as_sf(),mapping = aes(shape= typ))
+# # graph visualization
+# data <- toVisNetworkData(G)
+# data$nodes$x = data$nodes$lon
+# data$nodes$y = data$nodes$lat
+# 
+# output$mymapInteractive <- renderLeaflet({
+#   m})
+# output$mymapStatic <- renderPlot({
+#   p})
+# output$networkAustria <- renderVisNetwork({
+#   visNetwork(nodes = data$nodes, edges = data$edges, height = "500px") %>% 
+#     visOptions(highlightNearest = TRUE, nodesIdSelection = TRUE)
+# })
