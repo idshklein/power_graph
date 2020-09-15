@@ -23,7 +23,38 @@ net <- as_sfnetwork(edges) %>%
   activate(nodes) %>% 
   st_join(nodes,by = "wktsrid4326")
 data <- toVisNetworkData(G)
-data$edges %>% View()
+num_cables <- sapply(str_split(data$edges$cables,";"),function(x) mean(as.integer(x),na.rm = T))
+num_cables[is.nan(num_cables)] <- min(num_cables,na.rm = T)
+data$edges$num_cables <- num_cables
+num_wires <- sapply(str_split(data$edges$wires,";"),function(x) mean(as.integer(x),na.rm = T))
+num_wires[is.nan(num_wires)] <- min(num_wires,na.rm = T)
+data$edges$num_wires <- num_wires
+data$edges$width <- data$edges$num_cables
+data$edges$id <- 1:nrow(data$edges)
+data$edges$group <- data$edges$operator
+
+# extreme_nodes calc
+# largest subgraphs which are complete
+largest_clique <- largest_cliques(G)
+data$nodes$clique <- "single"
+data$nodes$clique[unlist(largest_clique)]<- "clique"
+# parts of a graph
+data$nodes$component <- membership(components(G))
+# cut vertices
+data$nodes$articulation_points <- "no"
+data$nodes[articulation_points(G) %>% as.vector(),"articulation_points"] <- "yes"
+# most far away vertices
+fv<- farthest_vertices(G,weights = NULL)
+data$nodes$far_points <- "no"
+data$nodes[unlist(fv$vertices) %>% as.vector(),"far_points"] <- "yes"
+far_distance <- fv$distance
+# shortest cycle - not interesting
+# girth(G)
+# maximal non-separable(no cut vertices) subgraphs - too complex
+# blocks(cohesive_blocks(G))
+
+
+
 # interactive spatial visualization
 # m <- leaflet() %>% 
 #   addProviderTiles("OpenStreetMap.Mapnik") %>% 
