@@ -1,4 +1,4 @@
-output$network_basic_manipulation <- renderVisNetwork({
+output$communities <- renderVisNetwork({
   
   
   # communities
@@ -12,15 +12,13 @@ output$network_basic_manipulation <- renderVisNetwork({
   
   membership_vector <- c()
   #score of clustering
-  modularity(G,membership_vector)
+  # modularity(G,membership_vector)
   
   # vis of clustering
   # V(G)$cluster_label_prop = membership(cluster_label_prop(G))
   # V(G)$color <- randomColor(max(V(G)$cluster_label_prop))[V(G)$cluster_label_prop]
   # tkplot(G)
   
-  #score of clustering
-  modularity(G,membership_vector)
   
   # complex - dont use
   # membership(cluster_walktrap(G))

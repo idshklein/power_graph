@@ -1,12 +1,3 @@
-library(tidyverse)
-library(igraph)
-library(tidygraph)
-library(sfnetworks)
-library(ggraph)
-library(ggspatial)
-library(sf)
-library(leaflet)
-library(visNetwork)
 library(shiny)
 source("spatial.R", local = TRUE, encoding = "UTF-8")
 ui <- shinyUI(navbarPage(
@@ -16,7 +7,7 @@ ui <- shinyUI(navbarPage(
   source("Centrality_indices_ui.R", local = TRUE)$value,
   source("Communities_ui.R", local = TRUE)$value
 ))
-server = shinyServer(function(input, output) {
+server = shinyServer(function(input, output,session) {
   # source("spatial.R", local = TRUE, encoding = "UTF-8")
   source("Basic_graph_manipulation_server.R", local = TRUE, encoding = "UTF-8")
   source("Extreme_nodes_server.R", local = TRUE, encoding = "UTF-8")

@@ -1,4 +1,4 @@
-output$network_basic_manipulation <- renderVisNetwork({
+output$centrality_indices <- renderVisNetwork({
   G
   eccentricity(G)
   betweenness(G)
