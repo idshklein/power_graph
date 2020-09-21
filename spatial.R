@@ -58,3 +58,33 @@ far_distance <- fv$distance
 # girth(G)
 # maximal non-separable(no cut vertices) subgraphs - too complex
 # blocks(cohesive_blocks(G))
+
+# nodes coords
+data$nodes$x <- data$nodes$lon
+data$nodes$y <- data$nodes$lat
+
+# nodes tooltip
+data$nodes$title <- paste0("<p>name:",data$nodes$present_name,
+                           "<br>operator:",data$nodes$operator,
+                           "<br>type:",data$nodes$typ,
+                           "<br>voltage:",data$nodes$voltage,"</p>")
+data$edges$title <- paste0("<p>name:",data$edges$name,
+                           "<br>operator:",data$edges$operator,
+                           "<br>type:",data$edges$type,
+                           "<br>voltage:",data$edges$voltage,"</p>")
+
+# centrality indices calc
+data$nodes$eccentricity <- eccentricity(G)
+data$nodes$betweenness <- betweenness(G)
+data$nodes$degree <- degree(G)
+data$nodes$page_rank <- page_rank(G)$vector
+data$nodes$eigen_centrality <- eigen_centrality(G)$vector
+closness_vec <- lapply(1:components(G)$no, function(x){
+  closeness(induced_subgraph(G,V(G)[membership(components(G))==x]))
+}) %>% unlist()
+data$nodes$closeness <- closness_vec[match(data$nodes$id,names(closness_vec))]
+data$nodes$transitivity <- transitivity(G,"localundirected")
+data$edges$betweenesss <- edge_betweenness(G)
+# with weights - future development
+# strength(G)
+

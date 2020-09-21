@@ -1,5 +1,5 @@
 shiny::tabPanel(
-  title = "Extreme nodes",
+  title = "Shortest path",
   fluidRow(
     column(
       width = 3,offset = 0, style='border: 4px double red;padding-right:0px;',
@@ -17,7 +17,7 @@ shiny::tabPanel(
     ),
     column(
       width = 8,offset = 0, style='padding:0px;',
-      visNetworkOutput("extreme_nodes", height = "800px")
+      visNetworkOutput("Shortest_path", height = "800px")
     )
   )
 )

@@ -1,7 +1,8 @@
 output$network_basic_manipulation <- renderVisNetwork({
   visNetwork(nodes = data$nodes, edges = data$edges, height = "500px")%>%
     visNodes(color = "blue", size = 20) %>% 
-    visOptions(selectedBy= "voltage")
+    visOptions(selectedBy= "voltage") %>% 
+    visInteraction(tooltipDelay = 0)
 })
 
 

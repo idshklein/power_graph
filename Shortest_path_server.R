@@ -1,4 +1,4 @@
-output$extreme_nodes <- renderVisNetwork({
+output$Shortest_path <- renderVisNetwork({
   path_click()
   # visNetwork(nodes = data$nodes, edges = data$edges, height = "500px")%>%
   #   visNodes(color = "blue", size = 20)
@@ -51,7 +51,8 @@ path_click <- reactive({
   data$nodes$y <- data$nodes$lat
   print(names(selected_path))
   print(selected_path)
-  visNetwork(nodes = data$nodes, edges = data$edges, height = "500px")
+  visNetwork(nodes = data$nodes, edges = data$edges, height = "500px") %>% 
+    visInteraction(tooltipDelay = 0)
   # visNetworkProxy("extreme_nodes") %>%
   #   visRemoveEdges(data$edges) %>%
   #   visUpdateEdges(data$edges) %>%
