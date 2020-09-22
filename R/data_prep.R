@@ -5,7 +5,7 @@ library(visNetwork)
 library(randomcoloR)
 
 # IO and initial processing
-G <- read_graph("Austria_highvoltage.graphml",format = "graphml")
+G <- read_graph("./Austria_highvoltage.graphml",format = "graphml")
 G <- as_tbl_graph(G)
 G <- G %>% 
   activate(nodes) %>%
