@@ -7,8 +7,8 @@ shiny::tabPanel(
       selectInput("centrality_index", "Centrality index:",
                   c("eccentricity","betweenness","degree","page_rank","eigen_centrality","closeness","transitivity")
                   ,selected ="eccentricity"),
-      selectInput("Hcolor","High color:",c("red","green","blue")),
-      selectInput("Lcolor","Low color:",c("red","green","blue"))
+      selectInput("Hcolor","High color:",c("red","green","blue"),selected = "green"),
+      selectInput("Lcolor","Low color:",c("red","green","blue"),selected = "red")
     ),
     column(
       width = 8,offset = 0, style='padding:0px;',

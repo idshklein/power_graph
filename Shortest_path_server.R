@@ -10,14 +10,11 @@ path_click <- reactive({
   query_node <- input$query_node
   path_num <- as.integer(input$path_num)
   dict <- c("number of wires" = "num_wires","number of cables"="num_cables")
-  # weight <- ifelse(input$edge_weight == "Nothing",1,data$edges[,dict[input$edge_weight]])
   if(input$edge_weight == "Nothing"){
     data$edges$weight  <- 1  
   }else{
     data$edges$weight <- 1/data$edges[,dict[input$edge_weight]]
   }
-  # data$edges$weight <- ifelse(input$edge_weight == "Nothing",1,data$edges[,dict[input$edge_weight]])
-  print(data$edges$weight)
   path_type <- input$path_type
   if(path_type == "Shortest paths"){
     sp <- all_shortest_paths(G,origin,destination)$res
@@ -36,6 +33,25 @@ path_click <- reactive({
     choices = 1:number_of_paths,
     selected = path_num
   )
+  updateSelectInput(
+    session,
+    "origin_node",
+    choices = data$nodes$id[!data$nodes$id %in% c(destination,query_node)],
+    selected = origin
+  )
+  updateSelectInput(
+    session,
+    "destination_node",
+    choices = data$nodes$id[!data$nodes$id %in% c(origin,query_node)],
+    selected = destination
+  )
+  updateSelectInput(
+    session,
+    "query_node",
+    choices = data$nodes$id[!data$nodes$id %in% c(destination,origin)],
+    selected = query_node
+  )
+  
   color_of_query_node <- query_node %in% names(selected_path)
   data$edges$color <- "#D3D3D3"
   q <- data.frame(from = as.character(names(selected_path)[1:(length(selected_path)-1)]),
@@ -47,15 +63,8 @@ path_click <- reactive({
   data$nodes[data$nodes$id == origin,"color"] <- "blue"
   data$nodes[data$nodes$id == destination,"color"] <- "yellow"
   data$nodes[data$nodes$id == query_node,"color"] <- ifelse(color_of_query_node,"purple","red")
-  data$nodes$x <- data$nodes$lon
-  data$nodes$y <- data$nodes$lat
   print(names(selected_path))
   print(selected_path)
   visNetwork(nodes = data$nodes, edges = data$edges, height = "500px") %>% 
     visInteraction(tooltipDelay = 0)
-  # visNetworkProxy("extreme_nodes") %>%
-  #   visRemoveEdges(data$edges) %>%
-  #   visUpdateEdges(data$edges) %>%
-  #   visRemoveNodes(data$nodes) %>%
-  #   visUpdateNodes(data$nodes)
 })
