@@ -1,9 +1,9 @@
 library(tidyverse)
 library(igraph)
 library(tidygraph)
-# library(sfnetworks)
-# library(sf)
 library(visNetwork)
+library(randomcoloR)
+
 # IO and initial processing
 G <- read_graph("Austria_highvoltage.graphml",format = "graphml")
 G <- as_tbl_graph(G)
@@ -11,23 +11,6 @@ G <- G %>%
   activate(nodes) %>%
   mutate(present_name = name)
 G <- set.vertex.attribute(G, "name", value=paste("n",1:149,sep=""))
-# # getting an sfnetwork object
-# nodes <- G %>%
-#   activate(nodes) %>%
-#   as_tibble() %>%
-#   mutate(icon = recode(typ, "joint" = "https://upload.wikimedia.org/wikipedia/commons/4/47/Bangladesh_Power_Grid_Transmission_Line.png",
-#                        "substation" = "https://e7.pngegg.com/pngimages/362/402/png-clipart-electric-grid-electrical-substation-electricity-surge-arrester-electric-power-distribution-transformer-distribution-miscellaneous-industry.png",
-#                        "sub_station" = "https://e7.pngegg.com/pngimages/362/402/png-clipart-electric-grid-electrical-substation-electricity-surge-arrester-electric-power-distribution-transformer-distribution-miscellaneous-industry.png",
-#                        "merge" = "https://f0.pngfuel.com/png/527/999/power-plant-clip-art-png-clip-art.png",
-#                        "plant" = "https://www.kindpng.com/picc/m/88-889207_plant-vector-power-electricity-creative-generation-power-station.png")) %>% 
-#   st_as_sf(wkt = "wktsrid4326", crs = 4326)
-# edges <- G %>% 
-#   activate(edges) %>%  
-#   as_tibble() %>% 
-#   st_as_sf(wkt = "wktsrid4326", crs = 4326)
-# net <- as_sfnetwork(edges) %>% 
-#   activate(nodes) %>% 
-#   st_join(nodes,by = "wktsrid4326")
 data <- toVisNetworkData(G)
 num_cables <- sapply(str_split(data$edges$cables,";"),function(x) mean(as.integer(x),na.rm = T))
 num_cables[is.nan(num_cables)] <- min(num_cables,na.rm = T)
@@ -42,17 +25,17 @@ data$edges$group <- data$edges$operator
 # extreme_nodes calc
 # largest subgraphs which are complete
 largest_clique <- largest_cliques(G)
-data$nodes$clique <- "single"
-data$nodes$clique[unlist(largest_clique)]<- "clique"
+data$nodes$clique <- FALSE
+data$nodes$clique[unlist(largest_clique)]<- TRUE
 # parts of a graph
 data$nodes$component <- membership(components(G))
 # cut vertices
-data$nodes$articulation_points <- "no"
-data$nodes[articulation_points(G) %>% as.vector(),"articulation_points"] <- "yes"
+data$nodes$articulation_points <- FALSE
+data$nodes[articulation_points(G) %>% as.vector(),"articulation_points"] <- TRUE
 # most far away vertices
 fv<- farthest_vertices(G,weights = NULL)
-data$nodes$far_points <- "no"
-data$nodes[unlist(fv$vertices) %>% as.vector(),"far_points"] <- "yes"
+data$nodes$far_points <- FALSE
+data$nodes[unlist(fv$vertices) %>% as.vector(),"far_points"] <- TRUE
 far_distance <- fv$distance
 # shortest cycle - not interesting
 # girth(G)
@@ -88,3 +71,36 @@ data$edges$betweenesss <- edge_betweenness(G)
 # with weights - future development
 # strength(G)
 
+# edges attributes
+# esge betweeness score
+data$edges$betweenesss <- edge_betweenness(G)
+# division of edges according to non-separable (no cut vertices) subgraphs
+li <- biconnected_components(G)
+ids <- li$component_edges %>% unlist() %>% unname()
+component_size <- unlist(sapply(li$component_edges,function(x) rep(length(x),length(x))))
+dfbi <- data.frame(ids,component_size) %>% arrange(ids)
+bi_edge_scale <- dfbi$component_size
+
+# communities
+# clusters based on cutting highest edge-betweeness edges
+ceb_community <- membership(cluster_edge_betweenness(G))
+data$nodes$ceb_community <- ceb_community
+# clusters based on voting
+clp_community <- membership(cluster_label_prop(G))
+data$nodes$clp_community <- clp_community
+#score of clustering
+ceb_score <- modularity(G,ceb_community)
+clp_score <-modularity(G,clp_community)
+# vis of clustering
+# V(G)$cluster_label_prop = membership(cluster_label_prop(G))
+# V(G)$color <- randomColor(max(V(G)$cluster_label_prop))[V(G)$cluster_label_prop]
+# tkplot(G)
+# complex - dont use
+# membership(cluster_walktrap(G))
+# membership(cluster_fast_greedy(G))
+# membership(cluster_leading_eigen(G))
+# # membership(cluster_spinglass(G)) only connected graph
+# membership(cluster_infomap(G))
+# membership(cluster_louvain(G))
+# clusters based on maximizing modularity - takes forever
+# membership(cluster_optimal(G))
