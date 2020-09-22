@@ -1,5 +1,5 @@
 library(shiny)
-source("spatial.R", local = TRUE, encoding = "UTF-8")
+source("data_prep.R", local = TRUE, encoding = "UTF-8")
 ui <- shinyUI(navbarPage(
   title = "Examples",
   source("Basic_graph_manipulation_ui.R", local = TRUE)$value,
