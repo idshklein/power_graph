@@ -9,7 +9,6 @@ ui <- shinyUI(navbarPage(
   source("extreme_nodes_ui.R", local = TRUE)$value
 ))
 server = shinyServer(function(input, output,session) {
-  # source("spatial.R", local = TRUE, encoding = "UTF-8")
   source("Basic_graph_manipulation_server.R", local = TRUE, encoding = "UTF-8")
   source("Shortest_path_server.R", local = TRUE, encoding = "UTF-8")
   source("Centrality_indices_server.R", local = TRUE, encoding = "UTF-8")
