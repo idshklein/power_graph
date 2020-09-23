@@ -5,9 +5,9 @@ account: idshklein
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 2863116
-bundleId: 3660237
+bundleId: 3660263
 url: https://idshklein.shinyapps.io/Network_power_graph/
-when: 1600841094.07435
+when: 1600841543.75807
 asMultiple: FALSE
 asStatic: FALSE
 ignoredFiles: README.html|README.md

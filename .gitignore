@@ -2,4 +2,5 @@
 .Rhistory
 .RData
 .Ruserdata
-/rsconnect/*
+rsconnect/shinyapps.io/idshklein/Network_power_graph.dcf
+*.dcf
